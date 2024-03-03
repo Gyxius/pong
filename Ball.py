@@ -8,13 +8,13 @@ class Ball():
         self.width = width
         self.height = height
         self.dy = random.choice([1,-1])
-        self.dx = random.choice([0.5,-0.5])
+        self.dx = random.choice([1,-1])
     
     def reset(self, game):
         self.x = game.WINDOW_WIDTH // 2 - 50
         self.y = game.WINDOW_HEIGHT // 2 - 100
         self.dy = random.choice([1,-1])
-        self.dx = random.choice([0.5,-0.5])
+        self.dx = random.choice([1,-1])
 
     def update(self, dt):
         self.x = self.x + self.dx * dt

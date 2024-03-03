@@ -25,13 +25,21 @@ class Game:
         self.score_font = pygame.font.Font('font.ttf', 120)
         self.PADDLE_SPEED = 200
         self.gameState = 'start'
-        self.dt = 0.4
+        self.dt = 0.6
+        self.servingPlayer = 1
 
         self.player1 = Paddle(20, 60, 20, 100)
         self.player2 = Paddle(self.WINDOW_WIDTH - 40, self.WINDOW_HEIGHT - 200, 20, 100)
         self.ball = Ball(self.WINDOW_WIDTH // 2 - 50, self.WINDOW_HEIGHT // 2 - 100, 4, 4)
     
     def update(self):
+        if self.gameState == 'serve':
+            self.ball.dy = random.choice([-1,1])
+            if self.servingPlayer == 1:
+                self.ball.dx = random.choice([0.5,0.5])
+            else:
+                self.ball.dx = -random.choice([0.5,0.5])
+
         if self.gameState == 'play':
             if self.ball.collides(self.player1):
                 self.ball.dx = -self.ball.dx * 1.03
@@ -57,6 +65,18 @@ class Game:
                 self.ball.y = self.WINDOW_HEIGHT - 4
                 self.ball.dy = -self.ball.dy
 
+        if self.ball.x < 0:
+            self.servingPlayer = 1
+            self.player2.score += 1
+            self.ball.reset(self)
+            self.gameState = 'serve'
+
+        if self.ball.x > self.WINDOW_WIDTH:
+            self.servingPlayer = 2
+            self.player1.score += 1
+            self.ball.reset(self)
+            self.gameState = 'serve'
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -79,10 +99,11 @@ class Game:
                     self.player2.update(self)
                 elif event.key == K_RETURN:
                     if self.gameState == 'start':
-                        self.gameState = 'play'
+                        self.gameState = 'serve'
                     else:
-                        self.gameState = 'start'
-                        self.ball.reset(self)
+                        self.gameState = 'serve'
+                        self.gameState = 'play'
+                        #self.ball.reset(self)
 
         if self.gameState == 'play':
             self.ball.update(self.dt)
@@ -91,14 +112,32 @@ class Game:
         # Score
         score1 = self.score_font.render(str(self.player1.score), True, self.WHITE)
         score2 = self.score_font.render(str(self.player2.score), True, self.WHITE)
-        self.screen.blit(score1, (self.WINDOW_WIDTH//2 + 40, self.WINDOW_HEIGHT//2 - 200))
-        self.screen.blit(score2, (self.WINDOW_WIDTH//2 - 200 + 30, self.WINDOW_HEIGHT//2 - 200))
-
+        self.screen.blit(score1, (self.WINDOW_WIDTH//2 - 200 + 30, self.WINDOW_HEIGHT//2 - 200))
+        self.screen.blit(score2, (self.WINDOW_WIDTH//2 + 40, self.WINDOW_HEIGHT//2 - 200))
+        
+        """
         if self.gameState == 'start':
             self.screen.blit(self.start_text, (self.WINDOW_WIDTH//2 - 100, 50))
         else:
             self.screen.blit(self.play_text, (self.WINDOW_WIDTH//2 - 100, 50))
-  
+        """
+
+
+        if self.gameState == 'start':
+            self.welcome_text = self.text_font.render('Welcome to Pong!', True, self.WHITE)
+            self.press_enter_text = self.text_font.render('Press Enter to begin!', True, self.WHITE)
+            self.screen.blit(self.welcome_text, (self.WINDOW_WIDTH//2 - 100, 50))
+            self.screen.blit(self.press_enter_text, (self.WINDOW_WIDTH//2 - 100, 80))
+        
+        elif self.gameState == 'serve':
+            self.player_serve_text = self.text_font.render('Player ' + str(self.servingPlayer) + "'s serve!", True, self.WHITE)
+            self.press_enter_to_serve_text = self.text_font.render('Press Enter to serve!', True, self.WHITE)
+            self.screen.blit(self.player_serve_text, (self.WINDOW_WIDTH//2 - 100, 50))
+            self.screen.blit(self.press_enter_to_serve_text, (self.WINDOW_WIDTH//2 - 100, 80))
+
+        elif self.gameState == 'play':
+            pass
+
         # First Paddle
         self.player1.render(self)
         # Second Paddle
