@@ -1,8 +1,8 @@
 import pygame
 import sys
 from pygame.locals import *
-import random
 from Ball import *
+from Paddle import *
 
 class Game:
 
@@ -20,15 +20,12 @@ class Game:
         self.text_font = pygame.font.Font('font.ttf', 20)
         self.text = self.text_font.render('Hello Pong!', True, self.WHITE)
         self.score_font = pygame.font.Font('font.ttf', 120)
-
-        self.player1Score = 0
-        self.player2Score = 0
-        self.player1Y = 60
-        self.player2Y = self.WINDOW_HEIGHT - 200
         self.PADDLE_SPEED = 200
         self.gameState = 'start'
         self.dt = 0.4
 
+        self.player1 = Paddle(20, 60, 20, 100)
+        self.player2 = Paddle(self.WINDOW_WIDTH - 40, self.WINDOW_HEIGHT - 200, 20, 100)
         self.ball = Ball(self.WINDOW_WIDTH // 2 - 50, self.WINDOW_HEIGHT // 2 - 100, 4, 4)
     
     def update(self):
@@ -41,13 +38,17 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 elif event.key == K_z:
-                    self.player1Y += -self.PADDLE_SPEED * self.dt
+                    self.player1.dy = -self.PADDLE_SPEED
+                    self.player1.update(self)
                 elif event.key == K_s:
-                    self.player1Y += self.PADDLE_SPEED * self.dt
+                    self.player1.dy = self.PADDLE_SPEED
+                    self.player1.update(self)
                 elif event.key == K_UP:
-                    self.player2Y += -self.PADDLE_SPEED * self.dt
+                    self.player2.dy = -self.PADDLE_SPEED
+                    self.player2.update(self)
                 elif event.key == K_DOWN:
-                    self.player2Y +=  + self.PADDLE_SPEED * self.dt
+                    self.player1.dy = self.PADDLE_SPEED
+                    self.player2.update(self)
                 elif event.key == K_RETURN:
                     print("Enter")
                     if self.gameState == 'start':
@@ -60,23 +61,20 @@ class Game:
 
     def draw(self):
         # Score
-        score1 = self.score_font.render(str(self.player1Score), True, self.WHITE)
-        score2 = self.score_font.render(str(self.player2Score), True, self.WHITE)
+        score1 = self.score_font.render(str(self.player1.score), True, self.WHITE)
+        score2 = self.score_font.render(str(self.player2.score), True, self.WHITE)
         self.screen.blit(score1, (self.WINDOW_WIDTH//2 + 40, self.WINDOW_HEIGHT//2 - 200))
         self.screen.blit(score2, (self.WINDOW_WIDTH//2 - 200 + 30, self.WINDOW_HEIGHT//2 - 200))
-
 
         # Hello Pong Text
         self.screen.blit(self.text, (self.WINDOW_WIDTH//2 - 100, 50))
 
         # First Paddle
-        pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(20, self.player1Y, 20, 100))
-
+        self.player1.render(self)
         # Second Paddle
-        pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.WINDOW_WIDTH - 40, self.player2Y, 20, 100))
+        self.player2.render(self)
 
         # Ball 
-        #pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.ballX, self.ballY, 20, 20))
         self.ball.render(self)
         
         pygame.display.update()
