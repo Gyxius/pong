@@ -11,8 +11,8 @@ class Ball():
         self.dx = random.choice([0.5,-0.5])
     
     def reset(self, game):
-        self.x = game.VIRTUAL_WIDTH / 2 - 2
-        self.y = game.VIRTUAL_HEIGHT / 2 - 2
+        self.x = game.WINDOW_WIDTH // 2 - 50
+        self.y = game.WINDOW_HEIGHT // 2 - 100
         self.dy = random.choice([1,-1])
         self.dx = random.choice([0.5,-0.5])
 
@@ -22,3 +22,10 @@ class Ball():
 
     def render(self, game):
         pygame.draw.rect(game.screen, game.WHITE, pygame.Rect(self.x, self.y, 20, 20))
+
+    def collides(self, paddle):
+        if self.x > paddle.x + paddle.width or paddle.x > self.x + self.width:
+            return False
+        if self.y > paddle.y + paddle.height or paddle.y > self.y + self.height:
+            return False
+        return True

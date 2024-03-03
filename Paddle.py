@@ -19,3 +19,5 @@ class Paddle():
 
     def render(self, game):
         pygame.draw.rect(game.screen, game.WHITE, pygame.Rect(self.x, self.y, 20, 100))
+
+
