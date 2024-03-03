@@ -2,6 +2,7 @@ import pygame
 import sys
 from pygame.locals import *
 import random
+from Ball import *
 
 class Game:
 
@@ -25,13 +26,10 @@ class Game:
         self.player1Y = 60
         self.player2Y = self.WINDOW_HEIGHT - 200
         self.PADDLE_SPEED = 200
-        self.dt = 0.4
         self.gameState = 'start'
+        self.dt = 0.4
 
-        self.ballX = self.WINDOW_WIDTH // 2 - 50
-        self.ballY = self.WINDOW_HEIGHT // 2 - 100
-        self.ballDX = random.choice([1,-1])
-        self.ballDY = random.choice([0.5,-0.5])
+        self.ball = Ball(self.WINDOW_WIDTH // 2 - 50, self.WINDOW_HEIGHT // 2 - 100, 4, 4)
     
     def update(self):
         for event in pygame.event.get():
@@ -58,8 +56,7 @@ class Game:
                         self.gameState = 'start'
 
         if self.gameState == 'play':
-            self.ballX += self.ballDX * self.dt
-            self.ballY += self.ballDY * self.dt
+            self.ball.update(self.dt)
 
     def draw(self):
         # Score
@@ -79,19 +76,17 @@ class Game:
         pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.WINDOW_WIDTH - 40, self.player2Y, 20, 100))
 
         # Ball 
-        pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.ballX, self.ballY, 20, 20))
-
+        #pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.ballX, self.ballY, 20, 20))
+        self.ball.render(self)
         
         pygame.display.update()
 
     def gameLoop(self):
         while True:
-            
             self.screen.fill(self.BACKGROUND_COLOR)
             self.update()
             self.draw()
-                        
-        
+
 
 if __name__ == "__main__":
     game = Game()
