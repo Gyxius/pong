@@ -33,58 +33,64 @@ class Game:
         self.ballDX = random.choice([1,-1])
         self.ballDY = random.choice([0.5,-0.5])
     
+    def update(self):
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == K_z:
+                    self.player1Y += -self.PADDLE_SPEED * self.dt
+                elif event.key == K_s:
+                    self.player1Y += self.PADDLE_SPEED * self.dt
+                elif event.key == K_UP:
+                    self.player2Y += -self.PADDLE_SPEED * self.dt
+                elif event.key == K_DOWN:
+                    self.player2Y +=  + self.PADDLE_SPEED * self.dt
+                elif event.key == K_RETURN:
+                    print("Enter")
+                    if self.gameState == 'start':
+                        self.gameState = 'play'
+                    else:
+                        self.gameState = 'start'
+
+        if self.gameState == 'play':
+            self.ballX += self.ballDX * self.dt
+            self.ballY += self.ballDY * self.dt
+
+    def draw(self):
+        # Score
+        score1 = self.score_font.render(str(self.player1Score), True, self.WHITE)
+        score2 = self.score_font.render(str(self.player2Score), True, self.WHITE)
+        self.screen.blit(score1, (self.WINDOW_WIDTH//2 + 40, self.WINDOW_HEIGHT//2 - 200))
+        self.screen.blit(score2, (self.WINDOW_WIDTH//2 - 200 + 30, self.WINDOW_HEIGHT//2 - 200))
+
+
+        # Hello Pong Text
+        self.screen.blit(self.text, (self.WINDOW_WIDTH//2 - 100, 50))
+
+        # First Paddle
+        pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(20, self.player1Y, 20, 100))
+
+        # Second Paddle
+        pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.WINDOW_WIDTH - 40, self.player2Y, 20, 100))
+
+        # Ball 
+        pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.ballX, self.ballY, 20, 20))
+
+        
+        pygame.display.update()
+
     def gameLoop(self):
         while True:
             
             self.screen.fill(self.BACKGROUND_COLOR)
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-                    elif event.key == K_z:
-                        self.player1Y += -self.PADDLE_SPEED * self.dt
-                    elif event.key == K_s:
-                        self.player1Y += self.PADDLE_SPEED * self.dt
-                    elif event.key == K_UP:
-                        self.player2Y += -self.PADDLE_SPEED * self.dt
-                    elif event.key == K_DOWN:
-                        self.player2Y +=  + self.PADDLE_SPEED * self.dt
-                    elif event.key == K_RETURN:
-                        print("Enter")
-                        if self.gameState == 'start':
-                            self.gameState = 'play'
-                        else:
-                            self.gameState = 'start'
+            self.update()
+            self.draw()
                         
-            # Score
-            score1 = self.score_font.render(str(self.player1Score), True, self.WHITE)
-            score2 = self.score_font.render(str(self.player2Score), True, self.WHITE)
-            self.screen.blit(score1, (self.WINDOW_WIDTH//2 + 40, self.WINDOW_HEIGHT//2 - 200))
-            self.screen.blit(score2, (self.WINDOW_WIDTH//2 - 200 + 30, self.WINDOW_HEIGHT//2 - 200))
-
-
-            # Hello Pong Text
-            self.screen.blit(self.text, (self.WINDOW_WIDTH//2 - 100, 50))
-
-            # First Paddle
-            pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(20, self.player1Y, 20, 100))
-
-            # Second Paddle
-            pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.WINDOW_WIDTH - 40, self.player2Y, 20, 100))
-
-            if self.gameState == 'play':
-                self.ballX += self.ballDX * self.dt
-                self.ballY += self.ballDY * self.dt
-
-            # Ball 
-            pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(self.ballX, self.ballY, 20, 20))
-
-            
-            pygame.display.update()
         
 
 if __name__ == "__main__":
