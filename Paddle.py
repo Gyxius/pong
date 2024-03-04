@@ -15,7 +15,7 @@ class Paddle():
         if self.dy < 0:
             self.y = max(0, self.y + self.dy * game.dt)
         else:
-            self.y = min(game.WINDOW_HEIGHT, self.y + self.dy * game.dt)
+            self.y = min(game.WINDOW_HEIGHT - 100, self.y + self.dy * game.dt)
 
     def render(self, game):
         pygame.draw.rect(game.screen, game.WHITE, pygame.Rect(self.x, self.y, 20, 100))

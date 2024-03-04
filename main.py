@@ -14,6 +14,7 @@ class Game:
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 128)
         self.BACKGROUND_COLOR =  (40, 45, 52, 255)
+        self.winning_score = 2
 
         self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
         pygame.display.set_caption('Pong')
@@ -69,13 +70,23 @@ class Game:
             self.servingPlayer = 1
             self.player2.score += 1
             self.ball.reset(self)
-            self.gameState = 'serve'
+            if self.player2.score  >= self.winning_score:
+                self.winningPlayer = 2
+                self.gameState = 'done'
+            else:
+                self.gameState = 'serve'
+                self.ball.reset(self)
 
         if self.ball.x > self.WINDOW_WIDTH:
             self.servingPlayer = 2
             self.player1.score += 1
             self.ball.reset(self)
-            self.gameState = 'serve'
+            if self.player1.score  >= self.winning_score:
+                self.winningPlayer = 1
+                self.gameState = 'done'
+            else:
+                self.gameState = 'serve'
+                self.ball.reset(self)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -100,10 +111,18 @@ class Game:
                 elif event.key == K_RETURN:
                     if self.gameState == 'start':
                         self.gameState = 'serve'
-                    else:
+                    elif self.gameState == 'serve':
                         self.gameState = 'serve'
                         self.gameState = 'play'
-                        #self.ball.reset(self)
+                    elif self.gameState == 'done':
+                        self.gameState = 'serve'
+                        self.ball.reset(game)
+                        self.player1.score = 0
+                        self.player2.score = 0
+                        if self.winningPlayer == 1:
+                            self.servingPlayer = 2
+                        else:
+                            self.servingPlayer = 1
 
         if self.gameState == 'play':
             self.ball.update(self.dt)
@@ -115,14 +134,6 @@ class Game:
         self.screen.blit(score1, (self.WINDOW_WIDTH//2 - 200 + 30, self.WINDOW_HEIGHT//2 - 200))
         self.screen.blit(score2, (self.WINDOW_WIDTH//2 + 40, self.WINDOW_HEIGHT//2 - 200))
         
-        """
-        if self.gameState == 'start':
-            self.screen.blit(self.start_text, (self.WINDOW_WIDTH//2 - 100, 50))
-        else:
-            self.screen.blit(self.play_text, (self.WINDOW_WIDTH//2 - 100, 50))
-        """
-
-
         if self.gameState == 'start':
             self.welcome_text = self.text_font.render('Welcome to Pong!', True, self.WHITE)
             self.press_enter_text = self.text_font.render('Press Enter to begin!', True, self.WHITE)
@@ -137,6 +148,12 @@ class Game:
 
         elif self.gameState == 'play':
             pass
+
+        elif self.gameState == 'done':
+            self.player_wins_text = self.text_font.render('Player ' + str(self.servingPlayer) + " wins!", True, self.WHITE)
+            self.press_enter_to_restart_text = self.text_font.render('Press Enter to restart!', True, self.WHITE)
+            self.screen.blit(self.player_wins_text, (self.WINDOW_WIDTH//2 - 100, 50))
+            self.screen.blit(self.press_enter_to_restart_text, (self.WINDOW_WIDTH//2 - 100, 80))
 
         # First Paddle
         self.player1.render(self)
