@@ -16,6 +16,12 @@ class Game:
         self.BACKGROUND_COLOR =  (40, 45, 52, 255)
         self.winning_score = 2
 
+        self.sounds = {
+            'paddle_hit' : 'sounds/paddle_hit.wav',
+            'score' : 'sounds/score.wav',
+            'wall_hit' : 'sounds/wall_hit.wav'
+        }
+
         self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
         pygame.display.set_caption('Pong')
 
@@ -49,6 +55,9 @@ class Game:
                     self.ball.dy = -random.randint(1, 3)
                 else:
                     self.ball.dy = random.randint(1, 3)
+                
+                pygame.mixer.music.load(self.sounds['paddle_hit'])
+                pygame.mixer.music.play(0)
 
             if self.ball.collides(self.player2):
                 self.ball.dx = -self.ball.dx * 1.03
@@ -57,18 +66,27 @@ class Game:
                     self.ball.dy = -random.randint(1, 3)
                 else:
                     self.ball.dy = random.randint(1, 3)
+                
+                pygame.mixer.music.load(self.sounds['paddle_hit'])
+                pygame.mixer.music.play(0)
 
             if self.ball.y <= 0:
                 self.ball.y = 0
                 self.ball.dy = -self.ball.dy
+                pygame.mixer.music.load(self.sounds['wall_hit'])
+                pygame.mixer.music.play(0)
 
             if self.ball.y >= self.WINDOW_HEIGHT - 4:
                 self.ball.y = self.WINDOW_HEIGHT - 4
                 self.ball.dy = -self.ball.dy
+                pygame.mixer.music.load(self.sounds['wall_hit'])
+                pygame.mixer.music.play(0)
 
         if self.ball.x < 0:
             self.servingPlayer = 1
             self.player2.score += 1
+            pygame.mixer.music.load(self.sounds['score'])
+            pygame.mixer.music.play(0)
             self.ball.reset(self)
             if self.player2.score  >= self.winning_score:
                 self.winningPlayer = 2
@@ -80,6 +98,8 @@ class Game:
         if self.ball.x > self.WINDOW_WIDTH:
             self.servingPlayer = 2
             self.player1.score += 1
+            pygame.mixer.music.load(self.sounds['score'])
+            pygame.mixer.music.play(0)
             self.ball.reset(self)
             if self.player1.score  >= self.winning_score:
                 self.winningPlayer = 1
