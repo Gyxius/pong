@@ -36,10 +36,11 @@ class Game:
         self.servingPlayer = 1
 
         self.player1 = Paddle(20, 60, 20, 100)
-        self.player2 = Paddle(self.WINDOW_WIDTH - 40, self.WINDOW_HEIGHT - 200, 20, 100)
+        self.player2 =AIPaddle(self.WINDOW_WIDTH - 40, self.WINDOW_HEIGHT - 200, 20, 100)
         self.ball = Ball(self.WINDOW_WIDTH // 2 - 50, self.WINDOW_HEIGHT // 2 - 100, 4, 4)
     
     def update(self):
+        self.player2.update(self.ball, self)
         if self.gameState == 'serve':
             self.ball.dy = random.choice([-1,1])
             if self.servingPlayer == 1:
@@ -122,12 +123,6 @@ class Game:
                 elif event.key == K_s:
                     self.player1.dy = self.PADDLE_SPEED
                     self.player1.update(self)
-                elif event.key == K_UP:
-                    self.player2.dy = -self.PADDLE_SPEED
-                    self.player2.update(self)
-                elif event.key == K_DOWN:
-                    self.player2.dy = self.PADDLE_SPEED
-                    self.player2.update(self)
                 elif event.key == K_RETURN:
                     if self.gameState == 'start':
                         self.gameState = 'serve'
@@ -143,7 +138,6 @@ class Game:
                             self.servingPlayer = 2
                         else:
                             self.servingPlayer = 1
-
         if self.gameState == 'play':
             self.ball.update(self.dt)
 

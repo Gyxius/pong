@@ -21,3 +21,19 @@ class Paddle():
         pygame.draw.rect(game.screen, game.WHITE, pygame.Rect(self.x, self.y, 20, 100))
 
 
+class AIPaddle(Paddle):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+        self.speed = 1.3
+        
+    def update(self, ball, game):
+        if ball.dx > 0:
+            if ball.y < self.y:
+                self.y =  self.y - self.speed * game.dt
+            elif ball.y > self.y:
+                self.y =  self.y + self.speed * game.dt
+            else:
+                pass
+
+        
+
