@@ -35,12 +35,12 @@ class Game:
         self.dt = 0.6
         self.servingPlayer = 1
 
-        self.player1 = Paddle(20, 60, 20, 100)
-        self.player2 =AIPaddle(self.WINDOW_WIDTH - 40, self.WINDOW_HEIGHT - 200, 20, 100)
-        self.ball = Ball(self.WINDOW_WIDTH // 2 - 50, self.WINDOW_HEIGHT // 2 - 100, 4, 4)
+        self.player1 = Paddle(20, 60, 20, 100, game = self)
+        self.player2 =AIPaddle(self.WINDOW_WIDTH - 40, self.WINDOW_HEIGHT - 200, 20, 100, game = self)
+        self.ball = Ball(self.WINDOW_WIDTH // 2 - 50, self.WINDOW_HEIGHT // 2 - 100, 4, 4, game = self)
     
     def update(self):
-        self.player2.update(self.ball, self)
+        self.player2.update(self.ball)
         if self.gameState == 'serve':
             self.ball.dy = random.choice([-1,1])
             if self.servingPlayer == 1:
@@ -88,26 +88,26 @@ class Game:
             self.player2.score += 1
             pygame.mixer.music.load(self.sounds['score'])
             pygame.mixer.music.play(0)
-            self.ball.reset(self)
+            self.ball.reset()
             if self.player2.score  >= self.winning_score:
                 self.winningPlayer = 2
                 self.gameState = 'done'
             else:
                 self.gameState = 'serve'
-                self.ball.reset(self)
+                self.ball.reset()
 
         if self.ball.x > self.WINDOW_WIDTH:
             self.servingPlayer = 2
             self.player1.score += 1
             pygame.mixer.music.load(self.sounds['score'])
             pygame.mixer.music.play(0)
-            self.ball.reset(self)
+            self.ball.reset()
             if self.player1.score  >= self.winning_score:
                 self.winningPlayer = 1
                 self.gameState = 'done'
             else:
                 self.gameState = 'serve'
-                self.ball.reset(self)
+                self.ball.reset()
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -119,10 +119,10 @@ class Game:
                     sys.exit()
                 elif event.key == K_z:
                     self.player1.dy = -self.PADDLE_SPEED
-                    self.player1.update(self)
+                    self.player1.update()
                 elif event.key == K_s:
                     self.player1.dy = self.PADDLE_SPEED
-                    self.player1.update(self)
+                    self.player1.update()
                 elif event.key == K_RETURN:
                     if self.gameState == 'start':
                         self.gameState = 'serve'
@@ -131,7 +131,7 @@ class Game:
                         self.gameState = 'play'
                     elif self.gameState == 'done':
                         self.gameState = 'serve'
-                        self.ball.reset(game)
+                        self.ball.reset()
                         self.player1.score = 0
                         self.player2.score = 0
                         if self.winningPlayer == 1:
@@ -170,12 +170,12 @@ class Game:
             self.screen.blit(self.press_enter_to_restart_text, (self.WINDOW_WIDTH//2 - 100, 80))
 
         # First Paddle
-        self.player1.render(self)
+        self.player1.render()
         # Second Paddle
-        self.player2.render(self)
+        self.player2.render()
 
         # Ball 
-        self.ball.render(self)
+        self.ball.render()
     
         pygame.display.update()
 
